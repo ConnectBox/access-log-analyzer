@@ -15,24 +15,24 @@ class TestIngestor(unittest.TestCase):
     def test_ingest_old_records(self):
         self.assertTrue(datasource.connected())
 
-        add_mock_log_input('8.8.8.8 - - [09/May/2017:23:03:22 +0000] "GET /content/ HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"')
+        add_mock_log_input('8.8.8.8 - - [09/May/2017:23:03:22 +0000] "GET /content/foo HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"')
         add_mock_log_input('8.8.8.8 - - [09/May/2017:23:03:23 +0000] "GET /content/item1 HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"')
         add_mock_log_input('8.8.8.8 - - [09/May/2017:23:03:24 +0000] "GET /content/item1 HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"')
 
         ingester.ingest_log_input()
 
-        self.assertEqual(1, datasource.query_record_count('2017', '/content/'))
+        self.assertEqual(1, datasource.query_record_count('2017', '/content/foo'))
         self.assertEqual(2, datasource.query_record_count('2017', '/content/item1'))
-        self.assertEqual(1, datasource.query_record_count('201705', '/content/'))
+        self.assertEqual(1, datasource.query_record_count('201705', '/content/foo'))
         self.assertEqual(2, datasource.query_record_count('201705', '/content/item1'))
-        self.assertEqual(1, datasource.query_record_count('2017W19', '/content/'))
+        self.assertEqual(1, datasource.query_record_count('2017W19', '/content/foo'))
         self.assertEqual(2, datasource.query_record_count('2017W19', '/content/item1'))
 
         # Since today is not the day that the records were created none of the hourly or daily records
         # will be inserted
-        self.assertEqual(0, datasource.query_record_count('20170509', '/content/'))
+        self.assertEqual(0, datasource.query_record_count('20170509', '/content/foo'))
         self.assertEqual(0, datasource.query_record_count('20170509', '/content/item1'))
-        self.assertEqual(0, datasource.query_record_count('2017050923', '/content/'))
+        self.assertEqual(0, datasource.query_record_count('2017050923', '/content/foo'))
         self.assertEqual(0, datasource.query_record_count('2017050923', '/content/item1'))
 
     def test_ingest_today_records(self):
@@ -41,22 +41,22 @@ class TestIngestor(unittest.TestCase):
         set_today_ymd('20170509')
         set_today_ymdh('2017050912')
 
-        add_mock_log_input('8.8.8.8 - - [09/May/2017:12:03:22 +0000] "GET /content/ HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"')
+        add_mock_log_input('8.8.8.8 - - [09/May/2017:12:03:22 +0000] "GET /content/foo HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"')
         add_mock_log_input('8.8.8.8 - - [09/May/2017:12:03:23 +0000] "GET /content/item1 HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"')
         add_mock_log_input('8.8.8.8 - - [09/May/2017:12:03:24 +0000] "GET /content/item1 HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"')
 
         ingester.ingest_log_input()
 
-        self.assertEqual(1, datasource.query_record_count('2017', '/content/'))
+        self.assertEqual(1, datasource.query_record_count('2017', '/content/foo'))
         self.assertEqual(2, datasource.query_record_count('2017', '/content/item1'))
-        self.assertEqual(1, datasource.query_record_count('201705', '/content/'))
+        self.assertEqual(1, datasource.query_record_count('201705', '/content/foo'))
         self.assertEqual(2, datasource.query_record_count('201705', '/content/item1'))
-        self.assertEqual(1, datasource.query_record_count('2017W19', '/content/'))
+        self.assertEqual(1, datasource.query_record_count('2017W19', '/content/foo'))
         self.assertEqual(2, datasource.query_record_count('2017W19', '/content/item1'))
 
         # Since today is the day that the records were created  the hourly and daily records
         # will be inserted
-        self.assertEqual(1, datasource.query_record_count('20170509', '/content/'))
+        self.assertEqual(1, datasource.query_record_count('20170509', '/content/foo'))
         self.assertEqual(2, datasource.query_record_count('20170509', '/content/item1'))
-        self.assertEqual(1, datasource.query_record_count('2017050912', '/content/'))
+        self.assertEqual(1, datasource.query_record_count('2017050912', '/content/foo'))
         self.assertEqual(2, datasource.query_record_count('2017050912', '/content/item1'))

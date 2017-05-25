@@ -32,6 +32,16 @@ class Config(object):
         self.RESOURCE_GROUP = int(config.get('parser', 'RESOURCE_GROUP'))
         self.TIMESTAMP_PATTERN= config.get('parser', 'TIMESTAMP_PATTERN')
 
+        self.WHITELIST_PATTERNS = []
+        path_items = config.items( 'content_whitelist_patterns' )
+        for key, path in path_items:
+            self.WHITELIST_PATTERNS.append(path)
+
+        self.BLACKLIST_PATTERNS = []
+        path_items = config.items( 'content_blacklist_patterns' )
+        for key, path in path_items:
+            self.BLACKLIST_PATTERNS.append(path)
+
 args = parse_args()
 config = Config(args.config)
 
@@ -63,8 +73,8 @@ def get_current_date_strings():
     year = now.isocalendar()[0]
     return [str(year), month, day, hour, str(week)]
 
-# Todo this could be cleaned up - just need a single string and trim off the last 2 for ymd
 now = get_current_date_strings()
+
 def get_today_ymdh():
     return  '%s%s%s%s' % (now[0], now[1], now[2], now[3])
 

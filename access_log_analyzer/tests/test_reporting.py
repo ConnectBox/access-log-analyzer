@@ -48,10 +48,68 @@ class TestReporting(unittest.TestCase):
         self.assertEqual(content1, stats[0].get('resource'))
         self.assertEqual(content2, stats[1].get('resource'))
 
+    def test_filter_images(self):
+        self.assertTrue(datasource.connected())
+
+        for img_type in ['png', 'gif', 'jpg']:
+            content = '/content/image.%s' % img_type
+            add_mock_log_input('8.8.8.8 - - [09/May/2017:23:03:22 +0000] "GET %s HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"' % content)
+
+        ingester.ingest_log_input()
+
+        report_json = reporting.get_all_years()
+
+        self.assertEqual('[]', report_json)
+
+    def test_filter_icon_metadata(self):
+        self.assertTrue(datasource.connected())
+
+        add_mock_log_input('8.8.8.8 - - [09/May/2017:23:03:22 +0000] "GET %s HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"' % '/content/_icon_Music')
+        add_mock_log_input('8.8.8.8 - - [09/May/2017:23:03:22 +0000] "GET %s HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"' % '/content/Music/_icon_Blues')
+
+        ingester.ingest_log_input()
+
+        report_json = reporting.get_all_years()
+
+        self.assertEqual('[]', report_json)
+
+    def test_filter_non_content(self):
+        self.assertTrue(datasource.connected())
+
+        add_mock_log_input('8.8.8.8 - - [09/May/2017:23:03:22 +0000] "GET %s HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"' % '/admin/index.html')
+
+        ingester.ingest_log_input()
+
+        report_json = reporting.get_all_years()
+
+        self.assertEqual('[]', report_json)
+
+    def test_filter_root(self):
+        self.assertTrue(datasource.connected())
+
+        add_mock_log_input('8.8.8.8 - - [09/May/2017:23:03:22 +0000] "GET %s HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"' % '/content/')
+
+        ingester.ingest_log_input()
+
+        report_json = reporting.get_all_years()
+
+        self.assertEqual('[]', report_json)
+
+    def test_not_filtered(self):
+        self.assertTrue(datasource.connected())
+
+        add_mock_log_input('8.8.8.8 - - [09/May/2017:23:03:22 +0000] "GET %s HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"' % '/content/readme.MD')
+
+        ingester.ingest_log_input()
+
+        report_json = reporting.get_all_years()
+
+        self.assertNotEqual('[]', report_json)
+
     def test_reporting_all_years(self):
         self.assertTrue(datasource.connected())
 
-        contentRoot = '/content/'
+        contentRoot = '/content/foo1'
         contentItem = '/content/item1'
 
         add_mock_log_input('8.8.8.8 - - [09/May/2017:23:03:22 +0000] "GET %s HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"' % contentRoot)
@@ -70,7 +128,7 @@ class TestReporting(unittest.TestCase):
     def test_reporting_all_months(self):
         self.assertTrue(datasource.connected())
 
-        contentRoot = '/content/'
+        contentRoot = '/content/foo1'
         contentItem = '/content/item1'
 
         add_mock_log_input('8.8.8.8 - - [09/May/2017:23:03:22 +0000] "GET %s HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"' % contentRoot)
@@ -89,7 +147,7 @@ class TestReporting(unittest.TestCase):
     def test_reporting_all_weeks(self):
         self.assertTrue(datasource.connected())
 
-        contentRoot = '/content/'
+        contentRoot = '/content/foo1'
         contentItem = '/content/item1'
 
         add_mock_log_input('8.8.8.8 - - [09/May/2017:23:03:22 +0000] "GET %s HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"' % contentRoot)
@@ -116,11 +174,8 @@ class TestReporting(unittest.TestCase):
 
         access_log_template = '8.8.8.8 - - [%s +0000] "GET %s HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"'
 
-        contentRoot = '/content/'
-        contentItem = '/content/item1'
-
-        firstContentForYear = '/content/#1year'
-        secondContentForYear = '/content/#2year'
+        firstContentForYear = '/content/01year'
+        secondContentForYear = '/content/02year'
         firstYearCount = 300
         secondYearCount = 200
         for i in range(0, firstYearCount):
@@ -128,8 +183,8 @@ class TestReporting(unittest.TestCase):
         for i in range(0, secondYearCount):
             add_mock_log_input(access_log_template % ('01/Apr/2017:23:03:23', secondContentForYear))
 
-        firstContentForMonth = '/content/#1month'
-        secondContentForMonth = '/content/#2month'
+        firstContentForMonth = '/content/01month'
+        secondContentForMonth = '/content/02month'
         firstMonthCount = 50
         secondMonthCount = 25
         for i in range(0, firstMonthCount):
@@ -137,8 +192,8 @@ class TestReporting(unittest.TestCase):
         for i in range(0, secondMonthCount):
             add_mock_log_input(access_log_template % ('02/May/2017:23:03:23', secondContentForMonth))
 
-        firstContentForWeek = '/content/#1week'
-        secondContentForWeek = '/content/#2week'
+        firstContentForWeek = '/content/01week'
+        secondContentForWeek = '/content/02week'
         firstWeekCount = 20
         secondWeekCount = 11
         for i in range(0, firstWeekCount):
@@ -146,8 +201,8 @@ class TestReporting(unittest.TestCase):
         for i in range(0, secondWeekCount):
             add_mock_log_input(access_log_template % ('16/May/2017:23:03:23', secondContentForWeek))
 
-        firstContentForDay = '/content/#1day'
-        secondContentForDay = '/content/#2day'
+        firstContentForDay = '/content/01day'
+        secondContentForDay = '/content/02day'
         firstDayCount = 10
         secondDayCount = 5
         for i in range(0, firstDayCount):
@@ -155,8 +210,8 @@ class TestReporting(unittest.TestCase):
         for i in range(0, secondDayCount):
             add_mock_log_input(access_log_template % ('17/May/2017:12:03:23', secondContentForDay))
 
-        firstContentForHour = '/content/#1hour'
-        secondContentForHour = '/content/#2hour'
+        firstContentForHour = '/content/01hour'
+        secondContentForHour = '/content/02hour'
         firstHourCount = 2
         secondHourCount = 1
         for i in range(0, firstHourCount):

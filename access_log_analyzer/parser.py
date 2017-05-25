@@ -35,6 +35,17 @@ def parse_log_line(line):
     timestamp = groups[config.TIMESTAMP_GROUP]
     request = groups[config.REQUEST_GROUP]
 
+    whitelisted = False
+    for pattern in config.WHITELIST_PATTERNS:
+        if re.match(pattern, request):
+            whitelisted = True
+            break
+
+    if not whitelisted:
+        for pattern in config.BLACKLIST_PATTERNS:
+            if re.match(pattern, request):
+                return [None, None]
+
     groups = re.match(config.REQUEST_PATTERN, request).groups()
 
     content = groups[config.RESOURCE_GROUP]

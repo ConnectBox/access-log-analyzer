@@ -2,6 +2,10 @@ from access_log_analyzer import parser, datasource, log_input, get_today_ymd, ge
 
 def ingest_log_record(line, today_ymdh, today_ymd):
     content, record_dates = parser.parse_log_line(line)
+
+    if not content:
+        return
+
     for record_date in record_dates:
         # Skip insert of ymd since it is old
         if len(record_date) == 8 and record_date != today_ymd:
