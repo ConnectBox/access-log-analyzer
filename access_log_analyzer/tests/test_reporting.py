@@ -163,6 +163,31 @@ class TestReporting(unittest.TestCase):
 
         self.validate_simple_stats(report_json,  '2017W19', '2016W19', 2, 1, contentItem, contentRoot)
 
+    def test_get_full_report(self):
+        self.assertTrue(datasource.connected())
+
+        contentRoot = '/content/foo1'
+        contentItem = '/content/item1'
+
+        add_mock_log_input('8.8.8.8 - - [09/May/2017:23:03:22 +0000] "GET %s HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"' % contentRoot)
+        add_mock_log_input('8.8.8.8 - - [09/May/2017:23:03:23 +0000] "GET %s HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"' % contentItem)
+        add_mock_log_input('8.8.8.8 - - [09/May/2017:23:03:24 +0000] "GET %s HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"' % contentItem)
+        add_mock_log_input('8.8.8.8 - - [09/May/2016:23:03:22 +0000] "GET %s HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"' % contentRoot)
+        add_mock_log_input('8.8.8.8 - - [09/May/2016:23:03:23 +0000] "GET %s HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"' % contentItem)
+        add_mock_log_input('8.8.8.8 - - [09/May/2016:23:03:24 +0000] "GET %s HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"' % contentItem)
+
+        ingester.ingest_log_input()
+
+        report_json = reporting.get_full_report()
+
+        self.assertIsNotNone(report_json)
+
+        report = json.loads(report_json)
+
+        self.validate_simple_stats(json.dumps(report['year']), '2017', '2016', 2, 1, contentItem, contentRoot)
+        self.validate_simple_stats(json.dumps(report['month']),  '201705', '201605', 2, 1, contentItem, contentRoot)
+        self.validate_simple_stats(json.dumps(report['week']),  '2017W19', '2016W19', 2, 1, contentItem, contentRoot)
+
     def test_top_content(self):
         set_today_y('2017')
         set_today_yw('2017W20')

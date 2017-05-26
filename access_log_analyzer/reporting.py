@@ -41,6 +41,26 @@ def get_all_months():
 def get_all_weeks():
     return json.dumps(query_for_date(7))
 
+def get_full_report(limit=None):
+    result = {}
+    data = query_for_date(4, limit)
+    if not data:
+        data = []
+
+    result['year'] = data
+
+    data = query_for_date(6, limit)
+    if not data:
+        data = []
+    result['month'] = data
+
+    data = query_for_date(7, limit)
+    if not data:
+        data = []
+    result['week'] = data
+
+    return json.dumps(result)
+
 def get_today():
     return json.dumps(query_for_date(8))
 

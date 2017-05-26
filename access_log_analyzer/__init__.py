@@ -6,10 +6,11 @@ from datetime import datetime
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('inputfile')
-    parser.add_argument('--dbname', help='optional name to use for database file')
-    parser.add_argument('--outputname', help='optional name to use for output file', default='stats')
+    parser.add_argument('inputfile', nargs='?')
+    parser.add_argument('--db-name', help='optional name to use for database file. default: access_log', default='access_log')
+    parser.add_argument('--output-name', help='optional name to use for output file', default='stats')
     parser.add_argument('--config', help='optional configuration file', default='/etc/access-log-analyzer/config.cfg')
+    parser.add_argument('--report-only', action='store_true',  help='skips log ingestion and generates report from existing data')
 
     return parser.parse_args()
 
@@ -46,23 +47,15 @@ args = parse_args()
 config = Config(args.config)
 
 # Derive the database name from the log file if one is not specified
-dbname = args.dbname
-if not dbname:
-    # Remove path from input file
-    filename = os.path.basename(args.inputfile)
-
-    # Strip extension from filename
-    parts = os.path.splitext(filename)
-    while parts[0].find('.') != -1:
-        parts = os.path.splitext(parts[0])
-
-    dbname = '%s.db' % parts[0]
+dbname = '%s.db' % args.db_name
+outputname = args.output_name
 
 def connection_info():
     return '%s/%s' % (config.DATABASE_DIRECTORY, dbname)
 
-log_input = fileinput.input()
-
+log_input = None
+if not args.report_only:
+    log_input = fileinput.input()
 
 def get_current_date_strings():
     now = datetime.now()
