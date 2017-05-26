@@ -23,11 +23,11 @@ def process_request_time(request_time):
     date_time = strptime(request_time[:-6], config.TIMESTAMP_PATTERN)
     time_zone = Timezone(request_time[-5:])
 
-    time_info = list(date_time[:6]) + [ 0, None ]
-    
-    dt = datetime(*time_info) 
+    time_info = list(date_time[:6]) + [0, None]
 
-    return dt -  timedelta(seconds = time_zone.offset.seconds)
+    date = datetime(*time_info)
+
+    return date -  timedelta(seconds=time_zone.offset.seconds)
 
 def parse_log_line(line):
     groups = re.match(config.LOG_PATTERN, line).groups()
@@ -51,10 +51,10 @@ def parse_log_line(line):
     content = groups[config.RESOURCE_GROUP]
     timestamp = process_request_time(timestamp)
 
-    y = timestamp.strftime('%Y') # YYYY
-    ym = timestamp.strftime('%Y%m') # YYYYMM
-    yw = '%sW%s' % (y, '{:02d}'.format(timestamp.isocalendar()[1])) # YYYYWWW
-    ymd = timestamp.strftime('%Y%m%d') # YYYYMMDD
-    ymdh = timestamp.strftime('%Y%m%d%H') #YYYYMMDDHH
+    str_y = timestamp.strftime('%Y') # YYYY
+    str_ym = timestamp.strftime('%Y%m') # YYYYMM
+    str_yw = '%sW%s' % (str_y, '{:02d}'.format(timestamp.isocalendar()[1])) # YYYYWWW
+    str_ymd = timestamp.strftime('%Y%m%d') # YYYYMMDD
+    str_ymdh = timestamp.strftime('%Y%m%d%H') #YYYYMMDDHH
 
-    return [content, [y, ym, yw, ymd, ymdh]]
+    return [content, [str_y, str_ym, str_yw, str_ymd, str_ymdh]]

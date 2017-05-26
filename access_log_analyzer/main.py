@@ -1,5 +1,8 @@
-from access_log_analyzer import (connection_info,
-    datasource, reporting, ingester, outputname, config)
+from access_log_analyzer import (
+    connection_info,
+    datasource, reporting,
+    ingester, outputname, config
+)
 
 def main():
     datasource.open(connection_info())

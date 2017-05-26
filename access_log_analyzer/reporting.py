@@ -1,31 +1,33 @@
 import json
 
-from access_log_analyzer import (datasource,
+from access_log_analyzer import (
+    datasource,
     get_today_ymdh, get_today_ymd,
-    get_today_ym, get_today_yw, get_today_y)
+    get_today_ym, get_today_yw, get_today_y
+)
 
 def transform_query_results(rows):
-    datesMap = {}
+    dates_map = {}
     for row in rows:
         date = row[0]
         resource = row[1]
         count = row[2]
-        
-        dateData = datesMap.get(date)
-        if not dateData:
-            dateData = {}
-            dateData['date'] = date
-            dateData['stats'] = []
-            datesMap[date] = dateData
+
+        date_data = dates_map.get(date)
+        if not date_data:
+            date_data = {}
+            date_data['date'] = date
+            date_data['stats'] = []
+            dates_map[date] = date_data
 
         value = {}
         value['count'] = count
         value['resource'] = resource
-        dateData['stats'].append(value)
+        date_data['stats'].append(value)
 
     results = []
-    for key in sorted(datesMap.keys(), reverse=True):
-        results.append(datesMap[key])
+    for key in sorted(dates_map.keys(), reverse=True):
+        results.append(dates_map[key])
 
     return results
 

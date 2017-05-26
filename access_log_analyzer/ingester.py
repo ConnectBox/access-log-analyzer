@@ -1,5 +1,7 @@
-from access_log_analyzer import (parser, datasource,
-    log_input, get_today_ymd, get_today_ymdh)
+from access_log_analyzer import (
+    parser, datasource,
+    log_input, get_today_ymd, get_today_ymdh
+)
 
 def ingest_log_record(line, today_ymdh, today_ymd):
     content, record_dates = parser.parse_log_line(line)
