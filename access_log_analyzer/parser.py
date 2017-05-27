@@ -1,10 +1,16 @@
+""" Parsing module """
 from datetime import datetime, timedelta, tzinfo
 from time import strptime
 import re
 
-from access_log_analyzer import config
+from access_log_analyzer import (
+    TIMESTAMP_PATTERN, LOG_PATTERN,
+    TIMESTAMP_GROUP, REQUEST_GROUP, REQUEST_PATTERN,
+    WHITELIST_PATTERNS, BLACKLIST_PATTERNS, RESOURCE_GROUP
+)
 
 class Timezone(tzinfo):
+    """ Timezone class """
     def __init__(self, name="+0000"):
         self.name = name
         seconds = int(name[:-2])*3600 + int(name[-2:])*60
@@ -20,7 +26,8 @@ class Timezone(tzinfo):
         return self.name
 
 def process_request_time(request_time):
-    date_time = strptime(request_time[:-6], config.TIMESTAMP_PATTERN)
+    """ Process request time """
+    date_time = strptime(request_time[:-6], TIMESTAMP_PATTERN)
     time_zone = Timezone(request_time[-5:])
 
     time_info = list(date_time[:6]) + [0, None]
@@ -30,25 +37,26 @@ def process_request_time(request_time):
     return date -  timedelta(seconds=time_zone.offset.seconds)
 
 def parse_log_line(line):
-    groups = re.match(config.LOG_PATTERN, line).groups()
+    """ Parse access log line """
+    groups = re.match(LOG_PATTERN, line).groups()
 
-    timestamp = groups[config.TIMESTAMP_GROUP]
-    request = groups[config.REQUEST_GROUP]
+    timestamp = groups[TIMESTAMP_GROUP]
+    request = groups[REQUEST_GROUP]
 
     whitelisted = False
-    for pattern in config.WHITELIST_PATTERNS:
+    for pattern in WHITELIST_PATTERNS:
         if re.match(pattern, request):
             whitelisted = True
             break
 
     if not whitelisted:
-        for pattern in config.BLACKLIST_PATTERNS:
+        for pattern in BLACKLIST_PATTERNS:
             if re.match(pattern, request):
                 return [None, None]
 
-    groups = re.match(config.REQUEST_PATTERN, request).groups()
+    groups = re.match(REQUEST_PATTERN, request).groups()
 
-    content = groups[config.RESOURCE_GROUP]
+    content = groups[RESOURCE_GROUP]
     timestamp = process_request_time(timestamp)
 
     str_y = timestamp.strftime('%Y') # YYYY

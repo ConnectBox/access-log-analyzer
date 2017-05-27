@@ -1,9 +1,15 @@
+"""
+Ingestor module
+"""
 from access_log_analyzer import (
     parser, datasource,
     log_input, get_today_ymd, get_today_ymdh
 )
 
 def ingest_log_record(line, today_ymdh, today_ymd):
+    """
+    Ingest a log record
+    """
     content, record_dates = parser.parse_log_line(line)
 
     if not content:
@@ -25,6 +31,9 @@ def ingest_log_record(line, today_ymdh, today_ymd):
             datasource.insert_record_count(1, record_date, content)
 
 def ingest_log_input():
+    """
+    Ingest all log input
+    """
     if not log_input:
         return
 

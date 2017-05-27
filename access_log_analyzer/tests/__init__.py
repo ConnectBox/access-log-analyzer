@@ -1,57 +1,77 @@
+"""
+Tests module
+"""
 import access_log_analyzer
 
-_mock_log_input = []
-_mock_date = {}
+MOCK_LOG_INPUT = []
+MOCK_DATE = {}
 
-class MockFileInputContext():
+class MockFileInputContext(): # pylint: disable=too-few-public-methods
+    """
+    Mock file input
+    """
     def __init__(self):
         pass
 
     def __enter__(self):
-        return _mock_log_input
+        return MOCK_LOG_INPUT
 
     def __exit__(self, *args):
         pass
 
 def set_today_y(today_y):
-    _mock_date['y'] = today_y
+    """ Set current year """
+    MOCK_DATE['y'] = today_y
 
 def get_today_y():
-    return _mock_date['y']
+    """ get current year """
+    return MOCK_DATE['y']
 
 def set_today_yw(today_yw):
-    _mock_date['yw'] = today_yw
+    """ set current year + week """
+    MOCK_DATE['yw'] = today_yw
 
 def get_today_yw():
-    return _mock_date['yw']
+    """ get current year + week """
+    return MOCK_DATE['yw']
 
 def set_today_ym(today_ym):
-    _mock_date['ym'] = today_ym
+    """ set current year + month """
+    MOCK_DATE['ym'] = today_ym
 
 def get_today_ym():
-    return _mock_date['ym']
+    """ get current year + month """
+    return MOCK_DATE['ym']
 
 def set_today_ymd(today_ymd):
-    _mock_date['ymd'] = today_ymd
+    """ set current year + month + day """
+    MOCK_DATE['ymd'] = today_ymd
 
 def get_today_ymd():
-    return _mock_date['ymd']
+    """ get current year + month + day """
+    return MOCK_DATE['ymd']
 
 def set_today_ymdh(today_ymdh):
-    _mock_date['ymdh'] = today_ymdh
+    """ set current year + month + day + hour """
+    MOCK_DATE['ymdh'] = today_ymdh
 
 def get_today_ymdh():
-    return _mock_date['ymdh']
+    """ get current year + month + day + hour """
+    return MOCK_DATE['ymdh']
 
 def add_mock_log_input(line):
-    _mock_log_input.append(line)
+    """ Add a line to the mock log input """
+    MOCK_LOG_INPUT.append(line)
 
 def clear_mock_log_input():
-    del _mock_log_input[:]
+    """ Clear the mock log input """
+    del MOCK_LOG_INPUT[:]
 
 def in_memory_connection_info():
+    """ get mock db connection string """
     return ':memory:'
 
+# Wire up the mocks
 access_log_analyzer.log_input = MockFileInputContext()
 access_log_analyzer.connection_info = in_memory_connection_info
 access_log_analyzer.get_today_y = get_today_y

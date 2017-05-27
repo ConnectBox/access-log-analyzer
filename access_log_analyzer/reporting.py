@@ -1,3 +1,4 @@
+""" Reporting module """
 import json
 
 from access_log_analyzer import (
@@ -7,6 +8,7 @@ from access_log_analyzer import (
 )
 
 def transform_query_results(rows):
+    """ Transform query results """
     dates_map = {}
     for row in rows:
         date = row[0]
@@ -32,18 +34,23 @@ def transform_query_results(rows):
     return results
 
 def query_for_date(date_query, limit=None):
+    """ Query for a given date range and convert to a report """
     return transform_query_results(datasource.query_records(date_query, limit))
 
 def get_all_years():
+    """ All years report """
     return json.dumps(query_for_date(4))
 
 def get_all_months():
+    """ All months report """
     return json.dumps(query_for_date(6))
 
 def get_all_weeks():
+    """ All weeks report """
     return json.dumps(query_for_date(7))
 
 def get_full_report(limit=None):
+    """ Full report """
     result = {}
     data = query_for_date(4, limit)
     if not data:
@@ -64,12 +71,15 @@ def get_full_report(limit=None):
     return json.dumps(result)
 
 def get_today():
+    """ Today report """
     return json.dumps(query_for_date(8))
 
 def get_today_hourly():
+    """ Hourly report """
     return json.dumps(query_for_date(10))
 
 def get_top_content(limit=10):
+    """ Top content report """
     result = {}
     data = query_for_date(get_today_y(), limit)
     if data:

@@ -1,18 +1,22 @@
+""" Main entry point """
+
 from access_log_analyzer import (
     connection_info,
     datasource, reporting,
-    ingester, outputname, config
+    ingester, outputname,
+    OUTPUT_DIRECTORY
 )
 
 def main():
-    datasource.open(connection_info())
+    """ Main method """
+    datasource.open_connection(connection_info())
 
     ingester.ingest_log_input()
 
-    with open('%s/%s.json' % (config.OUTPUT_DIRECTORY, outputname), 'w') as out:
+    with open('%s/%s.json' % (OUTPUT_DIRECTORY, outputname), 'w') as out:
         out.write(reporting.get_full_report())
 
-    with open('%s/%s.top10.json' % (config.OUTPUT_DIRECTORY, outputname), 'w') as out:
+    with open('%s/%s.top10.json' % (OUTPUT_DIRECTORY, outputname), 'w') as out:
         out.write(reporting.get_top_content())
 
     datasource.close()
