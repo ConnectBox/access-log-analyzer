@@ -11,7 +11,7 @@ from datetime import datetime
 def parse_args():
     """ parse command line arguments """
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('inputfile', nargs='?')
+    arg_parser.add_argument('inputfile', metavar='FILE', nargs='*')
     arg_parser.add_argument(
         '--db-name',
         help='optional name to use for database file. default: access_log',
@@ -70,7 +70,7 @@ def connection_info():
 
 log_input = None
 if not args.report_only:
-    log_input = fileinput.input()
+    log_input = fileinput.input(files=args.inputfile)
 
 def get_current_date_strings():
     """ get current date string components """
