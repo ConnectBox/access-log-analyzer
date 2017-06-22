@@ -6,6 +6,7 @@ import os
 import argparse
 import sqlite3
 import fileinput
+import time
 from datetime import datetime
 
 def parse_args():
@@ -72,34 +73,22 @@ log_input = None
 if not args.report_only:
     log_input = fileinput.input(files=args.inputfile)
 
-def get_current_date_strings():
-    """ get current date string components """
-    current_time = datetime.now()
-    week = current_time.isocalendar()[1]
-    month = '{:02d}'.format(current_time.month)
-    day = '{:02d}'.format(current_time.day)
-    hour = '{:02d}'.format(current_time.hour)
-    year = current_time.isocalendar()[0]
-    return [str(year), month, day, hour, str(week)]
-
-now = get_current_date_strings()
-
 def get_today_ymdh():
     """ get current year + month + day + hour """
-    return  '%s%s%s%s' % (now[0], now[1], now[2], now[3])
+    return time.strftime('%Y%m%d%H')
 
 def get_today_ymd():
     """ get current year + month + day """
-    return '%s%s%s' % (now[0], now[1], now[2])
+    return time.strftime('%Y%m%d')
 
 def get_today_ym():
     """ get current year + month """
-    return '%s%s' % (now[0], now[1])
+    return time.strftime('%Y%m')
 
 def get_today_yw():
     """ get current year + week """
-    return '%sW%s' % (now[0], now[4])
+    return time.strftime('%Y%V')
 
 def get_today_y():
     """ get current year """
-    return '%s' % (now[0])
+    return time.strftime('%Y')
