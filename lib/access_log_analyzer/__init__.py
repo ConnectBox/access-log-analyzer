@@ -87,7 +87,7 @@ def get_today_ym():
 
 def get_today_yw():
     """ get current year + week """
-    return time.strftime('%Y%V')
+    return '%sW%s' % (time.strftime('%Y'), time.strftime('%V'))
 
 def get_today_y():
     """ get current year """
