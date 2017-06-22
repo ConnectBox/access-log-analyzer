@@ -124,6 +124,23 @@ class TestReporting(unittest.TestCase):
 
         self.assertEqual('[]', report_json)
 
+    def test_filter_content_folders(self):
+        """ Test blacklist folders under content """
+        self.assertTrue(datasource.connected())
+
+        add_mock_log_input(
+            '8.8.8.8 - - [09/May/2017:23:03:22 +0000] "GET %s%s' %
+            ('/content/music/', LOG_SUFFIX))
+        add_mock_log_input(
+            '8.8.8.8 - - [09/May/2017:23:03:22 +0000] "GET %s%s' %
+            ('/content/books/', LOG_SUFFIX))
+
+        ingester.ingest_log_input()
+
+        report_json = reporting.get_all_years()
+
+        self.assertEqual('[]', report_json)
+
     def test_not_filtered(self):
         """ Test non-filtered content """
         self.assertTrue(datasource.connected())
