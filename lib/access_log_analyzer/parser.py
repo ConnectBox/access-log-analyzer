@@ -38,7 +38,12 @@ def process_request_time(request_time):
 
 def parse_log_line(line):
     """ Parse access log line """
-    groups = re.match(LOG_PATTERN, line).groups()
+    match = re.match(LOG_PATTERN, line)
+    if not match:
+        print('Failed to parse log line %s' % line)
+        return [None, None]
+
+    groups = match.groups()
 
     timestamp = groups[TIMESTAMP_GROUP]
     request = groups[REQUEST_GROUP]
