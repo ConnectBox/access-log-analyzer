@@ -26,15 +26,15 @@ class TestIngestor(unittest.TestCase):
 
         add_mock_log_input((
             '8.8.8.8 - - [09/May/2017:23:03:22 +0000]'
-            ' "GET /content/foo HTTP/1.1" 200 954 "http://waypoint.local/" "Mozilla/5.0"'
+            ' "GET /content/foo HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"'
         ))
         add_mock_log_input((
             '8.8.8.8 - - [09/May/2017:23:03:23 +0000]'
-            ' "GET /content/item1 HTTP/1.1" 200 954 "http://waypoint.local/" "Mozilla/5.0"'
+            ' "GET /content/item1 HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"'
         ))
         add_mock_log_input((
             '8.8.8.8 - - [09/May/2017:23:03:24 +0000]'
-            ' "GET /content/item1 HTTP/1.1" 200 954 "http://waypoint.local/" "Mozilla/5.0"'
+            ' "GET /content/item1 HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"'
         ))
 
         ingester.ingest_log_input()
@@ -62,15 +62,15 @@ class TestIngestor(unittest.TestCase):
 
         add_mock_log_input((
             '8.8.8.8 - - [09/May/2017:12:03:22 +0000]'
-            ' "GET /content/foo HTTP/1.1" 200 954 "http://waypoint.local/" "Mozilla/5.0"'
+            ' "GET /content/foo HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"'
         ))
         add_mock_log_input((
             '8.8.8.8 - - [09/May/2017:12:03:23 +0000]'
-            ' "GET /content/item1 HTTP/1.1" 200 954 "http://waypoint.local/" "Mozilla/5.0"'
+            ' "GET /content/item1 HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"'
         ))
         add_mock_log_input((
             '8.8.8.8 - - [09/May/2017:12:03:24 +0000]'
-            ' "GET /content/item1 HTTP/1.1" 200 954 "http://waypoint.local/" "Mozilla/5.0"'
+            ' "GET /content/item1 HTTP/1.1" 200 954 "http://connectbox.local/" "Mozilla/5.0"'
         ))
 
         ingester.ingest_log_input()
